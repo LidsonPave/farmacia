@@ -3,6 +3,8 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\StockMovementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,7 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('medicines', MedicineController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('stock', StockController::class)->only(['index']);
+    Route::resource('movimentacoes', StockMovementController::class)->only(['index', 'store']);
 });
 
 require __DIR__.'/auth.php';
-
