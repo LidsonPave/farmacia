@@ -27,7 +27,7 @@
         <div class="space-y-1">
             <p class="px-3 text-xs font-semibold uppercase tracking-wider text-primary-300">Operações</p>
 
-            <x-layout.sidebar-link :href="'#'" :active="false">
+            <x-layout.sidebar-link :href="route('medicines.index')" :active="request()->routeIs('medicines.*')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5 shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-2.826c.417-.36.845-.7 1.284-1.018M12.05 12.05l-3.79-3.79m5.508-1.15a2.548 2.548 0 1 0-3.586-3.586L8.55 5.647m0 0L5.9 8.297" />
                 </svg>

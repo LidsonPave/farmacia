@@ -40,6 +40,18 @@ class Medicine extends Model
         ];
     }
 
+    public static function generateNextCode(): string
+    {
+        $lastNumber = static::query()
+            ->selectRaw("MAX(CAST(SUBSTRING(code, 4) AS UNSIGNED)) as max_number")
+            ->where("code", "LIKE", "MED%")
+            ->value("max_number");
+
+        $nextNumber = ($lastNumber ?? 0) + 1;
+
+        return "MED" . str_pad((string) $nextNumber, 4, "0", STR_PAD_LEFT);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
