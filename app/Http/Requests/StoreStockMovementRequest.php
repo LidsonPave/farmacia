@@ -16,8 +16,8 @@ class StoreStockMovementRequest extends FormRequest
      * @var array<string, array<int, string>>
      */
     private const VALID_REASONS_BY_TYPE = [
-        'entrada' => ['compra', 'devolucao', 'ajuste'],
-        'saida' => ['perda', 'ajuste'],
+        'entrada' => ['compra', 'devolucao'],
+        'saida' => ['perda', 'ajuste', 'devolucao'],
     ];
 
     public function authorize(): bool

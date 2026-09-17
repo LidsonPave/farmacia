@@ -156,9 +156,9 @@
                         <label class="text-xs font-medium text-gray-500">Motivo</label>
                         <select name="reason" required class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
                             <option value="compra" x-show="movementType === 'entrada'">Compra</option>
-                            <option value="devolucao" x-show="movementType === 'entrada'">Devolução</option>
+                            <option value="devolucao">Devolução</option>
                             <option value="perda" x-show="movementType === 'saida'">Perda</option>
-                            <option value="ajuste">Ajuste</option>
+                            <option value="ajuste" x-show="movementType === 'saida'">Ajuste</option>
                         </select>
                     </div>
                     </div>
