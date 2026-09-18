@@ -13,6 +13,10 @@ class Sale extends Model
 
     protected $fillable = [
         'user_id',
+        'subtotal',
+        'discount_type',
+        'discount_value',
+        'discount_amount',
         'total',
         'payment_method',
         'sold_at',
@@ -21,6 +25,9 @@ class Sale extends Model
     protected function casts(): array
     {
         return [
+            'subtotal' => 'decimal:2',
+            'discount_value' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
             'total' => 'decimal:2',
             'sold_at' => 'datetime',
         ];

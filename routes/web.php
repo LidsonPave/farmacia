@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\SupplierController;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('stock', StockController::class)->only(['index']);
     Route::resource('movimentacoes', StockMovementController::class)->only(['index', 'store']);
     Route::resource('fornecedores', SupplierController::class)->parameters(['fornecedores' => 'supplier'])->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('vendas', SaleController::class)->parameters(['vendas' => 'sale'])->only(['index', 'create', 'store', 'show']);
     Route::get('/validade', [ValidityController::class, 'index'])->name('validade.index');
 });
 

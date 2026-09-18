@@ -48,7 +48,7 @@
                 Movimentações
             </x-layout.sidebar-link>
 
-            <x-layout.sidebar-link :href="'#'" :active="false">
+            <x-layout.sidebar-link :href="route('vendas.create')" :active="request()->routeIs('vendas.*')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5 shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.836l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.98-4.716 2.545-7.234A1.125 1.125 0 0 0 19.98 5.25H4.5m0 0-.397-1.489m0 0L3.375 3M3.375 3h-.001M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                 </svg>

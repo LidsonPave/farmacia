@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class StockMovement extends Model
 {
@@ -50,6 +51,8 @@ class StockMovement extends Model
      * Regista uma movimentação de stock e atualiza a quantidade do medicamento
      * de forma atómica. Ponto único de entrada para qualquer alteração de stock,
      * reutilizável por Movimentações (manual) e Vendas (automático).
+     *
+     * @throws RuntimeException se a saída deixar o stock negativo (RN02).
      */
     public static function registerMovement(array $data): self
     {
@@ -59,6 +62,12 @@ class StockMovement extends Model
             if ($data['type'] === 'entrada') {
                 $medicine->increment('stock_quantity', $data['quantity']);
             } else {
+                if ($data['quantity'] > $medicine->stock_quantity) {
+                    throw new RuntimeException(
+                        "Stock insuficiente para {$medicine->name}. Stock atual: {$medicine->stock_quantity}."
+                    );
+                }
+
                 $medicine->decrement('stock_quantity', $data['quantity']);
             }
 
