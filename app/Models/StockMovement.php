@@ -16,6 +16,9 @@ class StockMovement extends Model
         'user_id',
         'type',
         'quantity',
+        'batch_number',
+        'batch_expiry_date',
+        'supplier_id',
         'reason',
         'reference',
     ];
@@ -24,6 +27,7 @@ class StockMovement extends Model
     {
         return [
             'quantity' => 'integer',
+            'batch_expiry_date' => 'date',
         ];
     }
 
@@ -35,6 +39,11 @@ class StockMovement extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     /**
@@ -58,6 +67,9 @@ class StockMovement extends Model
                 'user_id' => $data['user_id'],
                 'type' => $data['type'],
                 'quantity' => $data['quantity'],
+                'batch_number' => $data['batch_number'] ?? null,
+                'batch_expiry_date' => $data['batch_expiry_date'] ?? null,
+                'supplier_id' => $data['supplier_id'] ?? null,
                 'reason' => $data['reason'],
                 'reference' => $data['reference'] ?? null,
             ]);

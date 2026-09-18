@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStockMovementRequest;
 use App\Models\Medicine;
 use App\Models\StockMovement;
+use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,7 +14,7 @@ class StockMovementController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = StockMovement::query()->with(['medicine', 'user']);
+        $query = StockMovement::query()->with(['medicine', 'user', 'supplier']);
 
         if ($medicineId = $request->input('medicine_id')) {
             $query->where('medicine_id', $medicineId);
@@ -29,10 +30,12 @@ class StockMovementController extends Controller
 
         $movements = $query->latest()->paginate(15)->withQueryString();
         $medicines = Medicine::where('status', 'ativo')->orderBy('name')->get();
+        $suppliers = Supplier::orderBy('name')->get();
 
         return view('movimentacoes.index', [
             'movements' => $movements,
             'medicines' => $medicines,
+            'suppliers' => $suppliers,
         ]);
     }
 

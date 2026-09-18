@@ -34,6 +34,9 @@ class StoreStockMovementRequest extends FormRequest
             'medicine_id' => ['required', 'exists:medicines,id'],
             'type' => ['required', 'in:entrada,saida'],
             'quantity' => ['required', 'integer', 'min:1'],
+            'batch_number' => ['required_if:type,entrada', 'nullable', 'string', 'max:50'],
+            'batch_expiry_date' => ['required_if:type,entrada', 'nullable', 'date'],
+            'supplier_id' => ['required_if:type,entrada', 'nullable', 'exists:suppliers,id'],
             'reason' => ['required', 'in:compra,ajuste,devolucao,perda'],
             'reference' => ['nullable', 'string', 'max:100'],
         ];
@@ -48,6 +51,9 @@ class StoreStockMovementRequest extends FormRequest
             'medicine_id' => 'medicamento',
             'type' => 'tipo',
             'quantity' => 'quantidade',
+            'batch_number' => 'lote',
+            'batch_expiry_date' => 'validade do lote',
+            'supplier_id' => 'fornecedor',
             'reason' => 'motivo',
             'reference' => 'referência',
         ];

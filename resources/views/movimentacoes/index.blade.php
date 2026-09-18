@@ -74,6 +74,8 @@
                             <th class="px-4 py-3 text-left font-medium text-gray-500">Medicamento</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-500">Tipo</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-500">Quantidade</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-500">Lote</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-500">Fornecedor</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-500">Motivo</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-500">Referência</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-500">Utilizador</th>
@@ -92,13 +94,15 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-gray-600">{{ $movement->quantity }}</td>
+                                <td class="px-4 py-3 text-gray-600">{{ $movement->batch_number ?? '—' }}</td>
+                                <td class="px-4 py-3 text-gray-600">{{ $movement->supplier?->name ?? '—' }}</td>
                                 <td class="px-4 py-3 text-gray-600 capitalize">{{ $movement->reason }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $movement->reference ?? '—' }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $movement->user->name }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-8 text-center text-gray-400">
+                                <td colspan="9" class="px-4 py-8 text-center text-gray-400">
                                     Nenhuma movimentação registada.
                                 </td>
                             </tr>
@@ -161,6 +165,27 @@
                             <option value="ajuste" x-show="movementType === 'saida'">Ajuste</option>
                         </select>
                     </div>
+
+                        <div x-show="movementType === 'entrada'" class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-medium text-gray-500">Lote</label>
+                                <input type="text" name="batch_number" :required="movementType === 'entrada'" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-gray-500">Validade do Lote</label>
+                                <input type="date" name="batch_expiry_date" :required="movementType === 'entrada'" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                            </div>
+                        </div>
+
+                        <div x-show="movementType === 'entrada'">
+                            <label class="text-xs font-medium text-gray-500">Fornecedor</label>
+                            <select name="supplier_id" :required="movementType === 'entrada'" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                                <option value="">Selecione...</option>
+                                @foreach($suppliers as $supplier)
+                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
 
