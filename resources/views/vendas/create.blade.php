@@ -67,15 +67,37 @@
                 </p>
             </div>
 
-            <div class="mt-4 space-y-1 border-t border-gray-200 pt-3">
-                <div class="flex justify-between text-sm text-gray-600">
-                    <span>Subtotal</span>
-                    <span x-text="formatMoney(subtotal()) + ' MT'"></span>
+            <div class="mt-4 space-y-3 border-t border-gray-200 pt-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-medium text-gray-500">Desconto</label>
+                        <select x-model="discountType" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                            <option value="none">Sem desconto</option>
+                            <option value="fixed">Valor fixo (MT)</option>
+                            <option value="percentage">Percentagem (%)</option>
+                        </select>
+                    </div>
+                    <div x-show="discountType !== 'none'">
+                        <label class="text-xs font-medium text-gray-500">Valor</label>
+                        <input type="number" min="0" step="0.01" x-model.number="discountValue" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
                 </div>
-                <div class="flex justify-between text-base font-semibold text-gray-900">
-                    <span>Total</span>
-                    <span x-text="formatMoney(subtotal()) + ' MT'"></span>
+
+                <div class="space-y-1">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Subtotal</span>
+                        <span x-text="formatMoney(subtotal()) + ' MT'"></span>
+                    </div>
+                    <div class="flex justify-between text-sm text-red-600" x-show="discountAmount() > 0">
+                        <span>Desconto</span>
+                        <span x-text="'- ' + formatMoney(discountAmount()) + ' MT'"></span>
+                    </div>
+                    <div class="flex justify-between text-base font-semibold text-gray-900">
+                        <span>Total</span>
+                        <span x-text="formatMoney(total()) + ' MT'"></span>
+                    </div>
                 </div>
+            </div>
             </div>
 
             <div class="mt-4">
@@ -98,6 +120,8 @@
                     </div>
                 </template>
                 <input type="hidden" name="payment_method" x-model="paymentMethod">
+                <input type="hidden" name="discount_type" x-model="discountType">
+                <input type="hidden" name="discount_value" x-model="discountValue">
 
                 <button
                     type="submit"
@@ -117,6 +141,8 @@
             search: '',
             cart: [],
             paymentMethod: 'dinheiro',
+            discountType: 'none',
+            discountValue: 0,
             medicines: @json($medicines),
 
             filteredMedicines() {
@@ -176,6 +202,25 @@
 
             subtotal() {
                 return this.cart.reduce((sum, item) => sum + (item.sale_price * item.quantity), 0);
+            },
+
+            discountAmount() {
+                const sub = this.subtotal();
+                const value = parseFloat(this.discountValue) || 0;
+
+                if (this.discountType === 'fixed') {
+                    return Math.min(value, sub);
+                }
+
+                if (this.discountType === 'percentage') {
+                    return sub * (Math.min(value, 100) / 100);
+                }
+
+                return 0;
+            },
+
+            total() {
+                return this.subtotal() - this.discountAmount();
             },
 
             formatMoney(value) {

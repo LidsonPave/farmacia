@@ -23,6 +23,8 @@ class StoreSaleRequest extends FormRequest
             'items.*.medicine_id' => ['required', 'exists:medicines,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'payment_method' => ['required', 'in:dinheiro,mpesa,emola,cartao,outro'],
+            'discount_type' => ['nullable', 'in:none,fixed,percentage'],
+            'discount_value' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -34,6 +36,8 @@ class StoreSaleRequest extends FormRequest
         return [
             'items' => 'itens',
             'payment_method' => 'método de pagamento',
+            'discount_type' => 'tipo de desconto',
+            'discount_value' => 'valor do desconto',
         ];
     }
 
@@ -41,6 +45,7 @@ class StoreSaleRequest extends FormRequest
     {
         $validator->after(function (Validator $validator) {
             $items = $this->input('items', []);
+            $subtotal = 0;
 
             foreach ($items as $index => $item) {
                 $medicine = Medicine::find($item['medicine_id'] ?? null);
@@ -50,6 +55,7 @@ class StoreSaleRequest extends FormRequest
                 }
 
                 $quantity = (int) ($item['quantity'] ?? 0);
+                $subtotal += $medicine->sale_price * $quantity;
 
                 if ($quantity > $medicine->stock_quantity) {
                     $validator->errors()->add(
@@ -57,6 +63,17 @@ class StoreSaleRequest extends FormRequest
                         "Stock insuficiente para {$medicine->name}. Stock atual: {$medicine->stock_quantity}."
                     );
                 }
+            }
+
+            $discountType = $this->input('discount_type', 'none');
+            $discountValue = (float) $this->input('discount_value', 0);
+
+            if ($discountType === 'percentage' && $discountValue > 100) {
+                $validator->errors()->add('discount_value', 'O desconto percentual não pode ultrapassar 100%.');
+            }
+
+            if ($discountType === 'fixed' && $discountValue > $subtotal) {
+                $validator->errors()->add('discount_value', 'O desconto não pode ser superior ao subtotal da venda.');
             }
         });
     }

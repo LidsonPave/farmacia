@@ -55,13 +55,24 @@ class SaleController extends Controller
                 $subtotal += $medicine->sale_price * $item['quantity'];
             }
 
+            $discountType = $data['discount_type'] ?? 'none';
+            $discountValue = (float) ($data['discount_value'] ?? 0);
+
+            $discountAmount = match ($discountType) {
+                'fixed' => $discountValue,
+                'percentage' => round($subtotal * ($discountValue / 100), 2),
+                default => 0,
+            };
+
+            $total = $subtotal - $discountAmount;
+
             $sale = Sale::create([
                 'user_id' => auth()->id(),
                 'subtotal' => $subtotal,
-                'discount_type' => 'none',
-                'discount_value' => null,
-                'discount_amount' => 0,
-                'total' => $subtotal,
+                'discount_type' => $discountType,
+                'discount_value' => $discountType === 'none' ? null : $discountValue,
+                'discount_amount' => $discountAmount,
+                'total' => $total,
                 'payment_method' => $data['payment_method'],
                 'sold_at' => now(),
             ]);
