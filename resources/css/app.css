@@ -5,3 +5,94 @@
 [x-cloak] {
     display: none !important;
 }
+
+
+.receipt-print {
+    display: none;
+}
+
+@media print {
+    .app-shell {
+        display: none !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .receipt-print {
+        display: block;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    @page {
+        margin: 0;
+        size: 80mm auto;
+    }
+}
+
+.receipt {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #000;
+    width: 80mm;
+    height: auto;
+    padding: 3mm;
+    margin: 0 auto;
+    background: #fff;
+}
+
+.receipt-preview-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    background: #e5e7eb;
+    border-radius: 12px;
+}
+
+.receipt-preview-wrapper .receipt {
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+}
+
+.receipt p {
+    margin: 1px 0;
+}
+
+.receipt-center {
+    text-align: center;
+}
+
+.receipt-bold {
+    font-weight: 700;
+}
+
+.receipt-line {
+    margin: 3px 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.receipt-total {
+    font-size: 14px;
+    margin-top: 3px;
+    padding-top: 3px;
+    border-top: 1px dashed #000;
+}
+
+.receipt-demo {
+    font-size: 9px;
+    margin-top: 6px;
+    color: #444;
+}

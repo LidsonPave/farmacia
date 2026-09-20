@@ -13,7 +13,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden bg-gray-50">
+        <div x-data="{ sidebarOpen: false }" class="app-shell flex h-screen overflow-hidden bg-gray-50">
             <x-layout.sidebar />
 
             <div class="flex flex-1 flex-col overflow-hidden">
@@ -30,6 +30,9 @@
                 </main>
             </div>
         </div>
+
+        {{ $print ?? '' }}
+
         @stack('scripts')
     </body>
 </html>
