@@ -98,8 +98,6 @@
                     </div>
                 </div>
             </div>
-            </div>
-
             <div class="mt-4">
                 <label class="text-xs font-medium text-gray-500">Método de Pagamento</label>
                 <select x-model="paymentMethod" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
@@ -109,11 +107,19 @@
                     <option value="cartao">Cartão</option>
                     <option value="outro">Outro</option>
                 </select>
+            </div>
+
+            <div x-show="paymentMethod === 'dinheiro'" class="mt-4">
+                <label class="text-xs font-medium text-gray-500">Valor Recebido (MT)</label>
+                <input type="number" min="0" step="0.01" x-model.number="amountReceived" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                <p class="mt-1 text-xs" :class="changeAmount() >= 0 ? 'text-gray-500' : 'text-red-600'">
+                    Troco: <span x-text="formatMoney(changeAmount()) + ' MT'"></span>
+                </p>
+            </div>
 
             <div x-show="paymentMethod === 'mpesa' || paymentMethod === 'emola'" class="mt-4">
                 <label class="text-xs font-medium text-gray-500">Número do Cliente</label>
                 <input type="text" x-model="customerPhone" placeholder="84xxxxxxx" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
-            </div>
             </div>
 
             <div x-show="paymentRequestStatus === 'sent'" class="mt-4 rounded-lg border border-primary-200 bg-primary-50 p-4 text-center">
@@ -146,6 +152,7 @@
                 <input type="hidden" name="payment_method" x-model="paymentMethod">
                 <input type="hidden" name="discount_type" x-model="discountType">
                 <input type="hidden" name="discount_value" x-model="discountValue">
+                <input type="hidden" name="amount_received" x-model="amountReceived">
 
                 <button
                     type="submit"
@@ -169,6 +176,7 @@
             discountType: 'none',
             discountValue: 0,
             customerPhone: '',
+            amountReceived: 0,
             paymentRequestStatus: 'idle',
             paymentUrl: '',
             paymentReference: null,
@@ -233,6 +241,7 @@
                 return this.cart.reduce((sum, item) => sum + (item.sale_price * item.quantity), 0);
             },
 
+
             discountAmount() {
                 const sub = this.subtotal();
                 const value = parseFloat(this.discountValue) || 0;
@@ -250,6 +259,10 @@
 
             total() {
                 return this.subtotal() - this.discountAmount();
+            },
+
+            changeAmount() {
+                return (parseFloat(this.amountReceived) || 0) - this.total();
             },
 
             formatMoney(value) {

@@ -66,6 +66,14 @@ class SaleController extends Controller
 
             $total = $subtotal - $discountAmount;
 
+            $amountReceived = null;
+            $changeAmount = null;
+
+            if ($data['payment_method'] === 'dinheiro') {
+                $amountReceived = (float) $data['amount_received'];
+                $changeAmount = round($amountReceived - $total, 2);
+            }
+
             $sale = Sale::create([
                 'user_id' => auth()->id(),
                 'subtotal' => $subtotal,
@@ -73,6 +81,8 @@ class SaleController extends Controller
                 'discount_value' => $discountType === 'none' ? null : $discountValue,
                 'discount_amount' => $discountAmount,
                 'total' => $total,
+                'amount_received' => $amountReceived,
+                'change_amount' => $changeAmount,
                 'payment_method' => $data['payment_method'],
                 'sold_at' => now(),
             ]);

@@ -13,9 +13,6 @@ class StoreSaleRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function rules(): array
     {
         return [
@@ -25,12 +22,10 @@ class StoreSaleRequest extends FormRequest
             'payment_method' => ['required', 'in:dinheiro,mpesa,emola,cartao,outro'],
             'discount_type' => ['nullable', 'in:none,fixed,percentage'],
             'discount_value' => ['nullable', 'numeric', 'min:0'],
+            'amount_received' => ['required_if:payment_method,dinheiro', 'nullable', 'numeric', 'min:0'],
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function attributes(): array
     {
         return [
@@ -38,6 +33,7 @@ class StoreSaleRequest extends FormRequest
             'payment_method' => 'método de pagamento',
             'discount_type' => 'tipo de desconto',
             'discount_value' => 'valor do desconto',
+            'amount_received' => 'valor recebido',
         ];
     }
 
@@ -69,11 +65,26 @@ class StoreSaleRequest extends FormRequest
             $discountValue = (float) $this->input('discount_value', 0);
 
             if ($discountType === 'percentage' && $discountValue > 100) {
-                $validator->errors()->add('discount_value', 'O desconto percentual não pode ultrapassar 100%.');
+                $validator->errors()->add('discount_value', 'O desconto percentual nao pode ultrapassar 100%.');
             }
 
             if ($discountType === 'fixed' && $discountValue > $subtotal) {
-                $validator->errors()->add('discount_value', 'O desconto não pode ser superior ao subtotal da venda.');
+                $validator->errors()->add('discount_value', 'O desconto nao pode ser superior ao subtotal da venda.');
+            }
+
+            if ($this->input('payment_method') === 'dinheiro') {
+                $discountAmount = match ($discountType) {
+                    'fixed' => $discountValue,
+                    'percentage' => round($subtotal * ($discountValue / 100), 2),
+                    default => 0,
+                };
+
+                $total = $subtotal - $discountAmount;
+                $amountReceived = (float) $this->input('amount_received', 0);
+
+                if ($amountReceived < $total) {
+                    $validator->errors()->add('amount_received', 'O valor recebido nao pode ser inferior ao total da venda.');
+                }
             }
         });
     }

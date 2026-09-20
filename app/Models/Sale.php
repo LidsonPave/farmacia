@@ -18,6 +18,8 @@ class Sale extends Model
         'discount_value',
         'discount_amount',
         'total',
+        'amount_received',
+        'change_amount',
         'payment_method',
         'sold_at',
     ];
@@ -29,6 +31,8 @@ class Sale extends Model
             'discount_value' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'total' => 'decimal:2',
+            'amount_received' => 'decimal:2',
+            'change_amount' => 'decimal:2',
             'sold_at' => 'datetime',
         ];
     }
