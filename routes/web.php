@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\PaymentRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
@@ -18,6 +19,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
 
+Route::get('/pagamentos/{reference}', [PaymentRequestController::class, 'show'])->name('pagamentos.show');
+Route::post('/pagamentos/{reference}/confirmar', [PaymentRequestController::class, 'confirm'])->name('pagamentos.confirm');
+Route::get('/pagamentos/{reference}/status', [PaymentRequestController::class, 'status'])->name('pagamentos.status');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -29,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('fornecedores', SupplierController::class)->parameters(['fornecedores' => 'supplier'])->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendas', SaleController::class)->parameters(['vendas' => 'sale'])->only(['index', 'create', 'store', 'show']);
     Route::get('/validade', [ValidityController::class, 'index'])->name('validade.index');
+    Route::post('/pagamentos', [PaymentRequestController::class, 'store'])->name('pagamentos.store');
 });
 
 require __DIR__.'/auth.php';

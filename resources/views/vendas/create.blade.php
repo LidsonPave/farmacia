@@ -109,8 +109,32 @@
                     <option value="cartao">Cartão</option>
                     <option value="outro">Outro</option>
                 </select>
+
+            <div x-show="paymentMethod === 'mpesa' || paymentMethod === 'emola'" class="mt-4">
+                <label class="text-xs font-medium text-gray-500">Número do Cliente</label>
+                <input type="text" x-model="customerPhone" placeholder="84xxxxxxx" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+            </div>
             </div>
 
+            <div x-show="paymentRequestStatus === 'sent'" class="mt-4 rounded-lg border border-primary-200 bg-primary-50 p-4 text-center">
+                <p class="text-sm font-medium text-gray-900">Aguardando confirmação do cliente...</p>
+                <div class="mt-3 flex justify-center" id="qrcode-container"></div>
+                <p class="mt-2 text-xs text-gray-500">Ou envie este link ao cliente:</p>
+                <p class="mt-1 break-all text-xs text-primary-700" x-text="paymentUrl"></p>
+            </div>
+
+            <div x-show="paymentRequestStatus === 'approved'" class="mt-4 rounded-lg border border-green-200 bg-green-50 p-4 text-center">
+                <p class="text-sm font-semibold text-green-700">Pagamento Aprovado — Demonstração</p>
+            </div>
+
+            <button
+                type="button"
+                x-show="(paymentMethod === 'mpesa' || paymentMethod === 'emola') && paymentRequestStatus === 'idle'"
+                @click="sendPaymentRequest"
+                class="mt-4 w-full rounded-lg bg-primary-100 px-4 py-3 text-sm font-medium text-primary-700 hover:bg-primary-200 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+                Enviar Pedido de Pagamento
+            </button>
             <form method="POST" action="{{ route('vendas.store') }}" @submit="beforeSubmit">
                 @csrf
                 <template x-for="(item, index) in cart" :key="'input-' + item.id">
@@ -125,6 +149,7 @@
 
                 <button
                     type="submit"
+                    x-show="paymentMethod !== 'mpesa' && paymentMethod !== 'emola' || paymentRequestStatus === 'approved'"
                     :disabled="cart.length === 0"
                     class="mt-4 w-full rounded-lg bg-primary-700 px-4 py-3 text-sm font-medium text-white hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -143,6 +168,10 @@
             paymentMethod: 'dinheiro',
             discountType: 'none',
             discountValue: 0,
+            customerPhone: '',
+            paymentRequestStatus: 'idle',
+            paymentUrl: '',
+            paymentReference: null,
             medicines: @json($medicines),
 
             filteredMedicines() {
@@ -227,6 +256,54 @@
                 return Number(value).toFixed(2).replace('.', ',');
             },
 
+
+            async sendPaymentRequest() {
+                if (!this.customerPhone || this.cart.length === 0) {
+                    return;
+                }
+
+                this.paymentRequestStatus = "sending";
+
+                try {
+                    const response = await fetch("{{ route('pagamentos.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector("meta[name=csrf-token]").content,
+                        },
+                        body: JSON.stringify({
+                            phone: this.customerPhone,
+                            amount: this.total(),
+                            payment_method: this.paymentMethod,
+                        }),
+                    });
+
+                    const data = await response.json();
+                    this.paymentReference = data.reference;
+                    this.paymentUrl = data.url;
+                    this.paymentRequestStatus = "sent";
+                    window.open(this.paymentUrl, "_blank");
+
+                    this.pollInterval = setInterval(() => this.checkPaymentStatus(), 2000);
+                } catch (e) {
+                    console.error("Erro ao criar pedido de pagamento", e);
+                    this.paymentRequestStatus = "idle";
+                }
+            },
+
+            async checkPaymentStatus() {
+                if (!this.paymentReference) {
+                    return;
+                }
+
+                const response = await fetch(`/pagamentos/${this.paymentReference}/status`);
+                const data = await response.json();
+
+                if (data.status === "approved") {
+                    this.paymentRequestStatus = "approved";
+                    clearInterval(this.pollInterval);
+                }
+            },
             beforeSubmit(event) {
                 if (this.cart.length === 0) {
                     event.preventDefault();
