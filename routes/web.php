@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PaymentRequestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockMovementController;
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::resource('medicines', MedicineController::class)->only(['store', 'update', 'destroy']);
         Route::resource('fornecedores', SupplierController::class)->parameters(['fornecedores' => 'supplier'])->only(['index', 'store', 'update', 'destroy']);
+        Route::get('/relatorios', [ReportController::class, 'index'])->name('relatorios.index');
     });
 });
 
