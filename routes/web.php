@@ -28,13 +28,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('medicines', MedicineController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('medicines', MedicineController::class)->only(['index']);
     Route::resource('stock', StockController::class)->only(['index']);
     Route::resource('movimentacoes', StockMovementController::class)->only(['index', 'store']);
-    Route::resource('fornecedores', SupplierController::class)->parameters(['fornecedores' => 'supplier'])->only(['index', 'store', 'update', 'destroy']);
     Route::resource('vendas', SaleController::class)->parameters(['vendas' => 'sale'])->only(['index', 'create', 'store', 'show']);
     Route::get('/validade', [ValidityController::class, 'index'])->name('validade.index');
     Route::post('/pagamentos', [PaymentRequestController::class, 'store'])->name('pagamentos.store');
+
+    Route::middleware('admin')->group(function () {
+        Route::resource('medicines', MedicineController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('fornecedores', SupplierController::class)->parameters(['fornecedores' => 'supplier'])->only(['index', 'store', 'update', 'destroy']);
+    });
 });
 
 require __DIR__.'/auth.php';
