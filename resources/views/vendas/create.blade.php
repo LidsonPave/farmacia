@@ -276,6 +276,7 @@
                 }
 
                 this.paymentRequestStatus = "sending";
+                const paymentWindow = window.open("about:blank", "_blank");
 
                 try {
                     const response = await fetch("{{ route('pagamentos.store') }}", {
@@ -295,7 +296,10 @@
                     this.paymentReference = data.reference;
                     this.paymentUrl = data.url;
                     this.paymentRequestStatus = "sent";
-                    window.open(this.paymentUrl, "_blank");
+
+                    if (paymentWindow) {
+                        paymentWindow.location.href = this.paymentUrl;
+                    }
 
                     this.pollInterval = setInterval(() => this.checkPaymentStatus(), 2000);
                 } catch (e) {
