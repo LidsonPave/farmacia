@@ -64,4 +64,10 @@
 
     <p class="receipt-center">Obrigado pela preferência!</p>
     <p class="receipt-center">Conserve este recibo.</p>
+
+    @if(in_array($sale->payment_method, ['mpesa', 'emola']))
+        <p class="receipt-line">--------------------------------</p>
+        <p class="receipt-center receipt-demo">MODO DEMONSTRAÇÃO</p>
+        <p class="receipt-center receipt-demo">Nenhum pagamento real efetuado.</p>
+    @endif
 </div>

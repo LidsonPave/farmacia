@@ -3,8 +3,8 @@
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-primary-700 transition-transform duration-200 ease-in-out lg:static lg:translate-x-0"
 >
-    <div class="flex h-16 shrink-0 items-center gap-2 px-6">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8 text-white">
+    <div class="flex h-16 shrink-0 items-center gap-3 border-b border-primary-600/40 px-6">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8 shrink-0 text-white">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
             <circle cx="12" cy="12" r="9" stroke-linecap="round" />
         </svg>
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <nav class="space-y-6 overflow-y-auto px-3 py-6">
+    <nav class="flex-1 space-y-6 overflow-y-auto px-3 py-6">
         <div class="space-y-1">
             <x-layout.sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5 shrink-0">
@@ -25,7 +25,7 @@
         </div>
 
         <div class="space-y-1">
-            <p class="px-3 text-xs font-semibold uppercase tracking-wider text-primary-300">Operações</p>
+            <p class="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-primary-300">Operações</p>
 
             <x-layout.sidebar-link :href="route('medicines.index')" :active="request()->routeIs('medicines.*')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5 shrink-0">
@@ -64,7 +64,7 @@
         </div>
 
         <div class="space-y-1">
-            <p class="px-3 text-xs font-semibold uppercase tracking-wider text-primary-300">Gestão</p>
+            <p class="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-primary-300">Gestão</p>
 
             @if(auth()->user()->isAdmin())
             <x-layout.sidebar-link :href="route('fornecedores.index')" :active="request()->routeIs('fornecedores.*')">
@@ -84,21 +84,22 @@
             </x-layout.sidebar-link>
             @endif
 
-            <x-layout.sidebar-link :href="'#'" :active="false">
+            @if(auth()->user()->isAdmin())
+            <x-layout.sidebar-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5 shrink-0">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                 </svg>
                 Utilizadores
             </x-layout.sidebar-link>
+            @endif
         </div>
     </nav>
 
-    <div class="mt-8 border-t border-primary-600/40 px-6 pt-4 pb-6">
+    <div class="border-t border-primary-600/40 px-6 pt-4 pb-6">
         <p class="text-sm font-semibold text-white">SGF</p>
         <p class="text-xs text-primary-200">Sistema de Gestão de Farmácia</p>
         <p class="mt-1 text-xs text-primary-300/70">v0.1 · Ambiente de demonstração</p>
     </div>
-
 </aside>
 
 <div

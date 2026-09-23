@@ -31,9 +31,17 @@ class ValidityController extends Controller
 
         $medicines = $query->orderByRaw('expiry_date IS NULL')->orderBy('expiry_date')->paginate(15)->withQueryString();
 
+        $activeMedicines = Medicine::where('status', 'ativo')->get();
+        $expiredCount = $activeMedicines->filter(fn (Medicine $m) => $m->isExpired())->count();
+        $nearExpiryCount = $activeMedicines->filter(fn (Medicine $m) => $m->isNearExpiry())->count();
+        $normalCount = $activeMedicines->filter(fn (Medicine $m) => $m->expiry_date && ! $m->isExpired() && ! $m->isNearExpiry())->count();
+
         return view('validade.index', [
             'medicines' => $medicines,
             'warningDays' => Medicine::EXPIRY_WARNING_DAYS,
+            'expiredCount' => $expiredCount,
+            'nearExpiryCount' => $nearExpiryCount,
+            'normalCount' => $normalCount,
         ]);
     }
 }

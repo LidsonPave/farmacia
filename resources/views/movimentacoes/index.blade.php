@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <x-ui.page-heading title="Movimentações" subtitle="Registo de entradas e saídas de stock" />
             <button
                 @click="$dispatch('open-movement-modal')"
                 type="button"
-                class="rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800"
+                class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-800"
             >
                 + Nova Movimentação
             </button>
@@ -13,17 +13,15 @@
     </x-slot>
 
     @if(session('success'))
-        <div class="mb-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-            {{ session('success') }}
-        </div>
+        <x-ui.alert type="success">{{ session('success') }}</x-ui.alert>
     @endif
 
     <div x-data="{ movementOpen: false }" @open-movement-modal.window="movementOpen = true">
         <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
-            <form method="GET" action="{{ route('movimentacoes.index') }}" class="flex flex-wrap items-end gap-3 border-b border-gray-200 p-4">
-                <div>
+            <form method="GET" action="{{ route('movimentacoes.index') }}" class="flex flex-wrap items-end gap-4 border-b border-gray-200 bg-gray-50/60 p-4 sm:p-5">
+                <div class="w-full sm:w-52">
                     <label class="text-xs font-medium text-gray-500">Medicamento</label>
-                    <select name="medicine_id" class="mt-1 rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                    <select name="medicine_id" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Todos</option>
                         @foreach($medicines as $medicine)
                             <option value="{{ $medicine->id }}" @selected(request('medicine_id') == $medicine->id)>
@@ -33,18 +31,18 @@
                     </select>
                 </div>
 
-                <div>
+                <div class="w-full sm:w-36">
                     <label class="text-xs font-medium text-gray-500">Tipo</label>
-                    <select name="type" class="mt-1 rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                    <select name="type" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Todos</option>
                         <option value="entrada" @selected(request('type') === 'entrada')>Entrada</option>
                         <option value="saida" @selected(request('type') === 'saida')>Saída</option>
                     </select>
                 </div>
 
-                <div>
+                <div class="w-full sm:w-40">
                     <label class="text-xs font-medium text-gray-500">Motivo</label>
-                    <select name="reason" class="mt-1 rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
+                    <select name="reason" class="mt-1 w-full rounded-lg border-gray-300 text-sm focus:border-primary-500 focus:ring-primary-500">
                         <option value="">Todos</option>
                         <option value="compra" @selected(request('reason') === 'compra')>Compra</option>
                         <option value="venda" @selected(request('reason') === 'venda')>Venda</option>
@@ -54,12 +52,12 @@
                     </select>
                 </div>
 
-                <div class="flex gap-2">
-                    <button type="submit" class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+                <div class="flex w-full gap-2 sm:w-auto">
+                    <button type="submit" class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-200">
                         Filtrar
                     </button>
                     @if(request()->anyFilled(['medicine_id', 'type', 'reason']))
-                        <a href="{{ route('movimentacoes.index') }}" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">
+                        <a href="{{ route('movimentacoes.index') }}" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-500 transition hover:text-gray-700">
                             Limpar
                         </a>
                     @endif
@@ -70,35 +68,35 @@
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Data</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Medicamento</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Tipo</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Quantidade</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Lote</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Fornecedor</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Motivo</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Referência</th>
-                            <th class="px-4 py-3 text-left font-medium text-gray-500">Utilizador</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Data</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Medicamento</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Tipo</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Quantidade</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Lote</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Fornecedor</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Motivo</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Referência</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Utilizador</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @forelse($movements as $movement)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-gray-600">{{ $movement->created_at->format('d/m/Y H:i') }}</td>
-                                <td class="px-4 py-3 font-medium text-gray-900">{{ $movement->medicine->name }}</td>
-                                <td class="px-4 py-3">
+                            <tr class="transition hover:bg-gray-50">
+                                <td class="px-4 py-3.5 text-xs text-gray-500">{{ $movement->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="px-4 py-3.5 font-medium text-gray-900">{{ $movement->medicine->name }}</td>
+                                <td class="px-4 py-3.5">
                                     @if($movement->type === 'entrada')
                                         <x-ui.badge status="success">Entrada</x-ui.badge>
                                     @else
-                                        <x-ui.badge status="danger">Saída</x-ui.badge>
+                                        <x-ui.badge status="neutral">Saída</x-ui.badge>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-gray-600">{{ $movement->quantity }}</td>
-                                <td class="px-4 py-3 text-gray-600">{{ $movement->batch_number ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-600">{{ $movement->supplier?->name ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-600 capitalize">{{ $movement->reason }}</td>
-                                <td class="px-4 py-3 text-gray-600">{{ $movement->reference ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-600">{{ $movement->user->name }}</td>
+                                <td class="px-4 py-3.5 text-right text-base font-semibold text-gray-900">{{ $movement->quantity }}</td>
+                                <td class="px-4 py-3.5 text-xs text-gray-500">{{ $movement->batch_number ?? '—' }}</td>
+                                <td class="px-4 py-3.5 text-gray-600">{{ $movement->supplier?->name ?? '—' }}</td>
+                                <td class="px-4 py-3.5 text-gray-600 capitalize">{{ $movement->reason }}</td>
+                                <td class="px-4 py-3.5 text-xs text-gray-500">{{ $movement->reference ?? '—' }}</td>
+                                <td class="px-4 py-3.5 text-xs text-gray-500">{{ $movement->user->name }}</td>
                             </tr>
                         @empty
                             <tr>
